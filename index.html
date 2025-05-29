@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <title>What Stars Say / ستارے کیا کہتے ہیں؟</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to left, #fbe9e7, #e3f2fd);
+      padding: 40px;
+      text-align: center;
+      direction: ltr;
+    }
+    h1 {
+      font-size: 36px;
+      color: #d81b60;
+    }
+    select, input, button {
+      padding: 10px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    #result {
+      margin-top: 30px;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      font-size: 20px;
+      max-width: 700px;
+      margin-inline: auto;
+      line-height: 1.8;
+    }
+    strong {
+      color: #00796b;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">What Stars Say?</h1>
+
+  <label for="language" id="langLabel">Language / زبان:</label>
+  <select id="language" onchange="changeLanguage()">
+    <option value="en">English</option>
+    <option value="ur">اردو</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh">中文</option>
+    <option value="ar">العربية</option>
+    <option value="hi">हिन्दी</option>
+    <option value="fa">فارسی</option>
+  </select>
+
+  <br><br>
+  <span id="dobLabel">Enter your Date of Birth:</span><br><br>
+  <input type="date" id="dob" min="1900-01-01" max="2025-12-31" />
+  <button onclick="getZodiac()" id="btn">See</button>
+
+  <div id="result"></div>
+   <script>
+    const data = {
+      ur: {
+        signs: {
+          Aries: "برج حمل: آپ جذباتی، حوصلہ مند اور قائدانہ صلاحیتوں کے حامل ہیں۔ آج نئے کام شروع کرنے کے لئے اچھا دن ہے۔",
+          Taurus: "برج ثور: آپ صابر، قابلِ اعتماد اور محنتی ہیں۔ آج اپنے مالی معاملات پر توجہ دیں۔",
+          Gemini: "برج جوزا: آپ ذہین، باتونی اور متجسس ہیں۔ آج کسی نئے شخص سے بات چیت فائدہ مند ہو سکتی ہے۔",
+          Cancer: "برج سرطان: آپ حساس اور محبت کرنے والے ہیں۔ آج جذباتی فیصلے کرنے سے گریز کریں۔",
+          Leo: "برج اسد: آپ پر اعتماد اور جراتمند ہیں۔ آج اپنی توانائی کو مثبت کاموں میں لگائیں۔",
+          Virgo: "برج سنبلہ: آپ محتاط اور منظم ہیں۔ آج اپنی صحت کا خاص خیال رکھیں۔",
+          Libra: "برج میزان: آپ توازن پسند اور خوش مزاج ہیں۔ آج کسی تنازعے سے بچیں۔",
+          Scorpio: "برج عقرب: آپ پرجوش اور مخلص ہیں۔ آج راز داری ضروری ہے۔",
+          Sagittarius: "برج قوس: آپ آزاد خیال اور پرجوش ہیں۔ آج کوئی نیا سفر خوشگوار ہو گا۔",
+          Capricorn: "برج جدی: آپ محنتی اور ذمہ دار ہیں۔ آج صبر اور استقامت سے کام لیں۔",
+          Aquarius: "برج دلو: آپ تخلیقی اور دوستوں کے پسندیدہ ہیں۔ آج نیا خیال آپ کو کامیابی دلا سکتا ہے۔",
+          Pisces: "برج حوت: آپ حساس اور ہمدرد ہیں۔ آج دوسروں کی مدد سے فائدہ ہو گا۔"
+        },
+        warnings: [
+          "آج جلد بازی سے بچیں۔",
+          "اپنے جذبات پر قابو رکھیں۔",
+          "کسی بھی معاملے میں دھیان سے فیصلہ کریں۔",
+          "آج غیر ضروری تنازعے سے پرہیز کریں۔"
+        ],
+        suggestions: [
+          "اپنے عزیزوں سے بات کریں۔",
+          "خود کے لیے وقت نکالیں۔",
+          "کسی نئے مشغلے کا آغاز کریں۔",
+          "پڑھائی یا کام میں توجہ دیں۔"
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>برج:</strong> ${sign}<br><br>
+          <strong>تفصیل:</strong> ${desc}<br><br>
+          <strong>آج کی احتیاط:</strong> ${warn}<br>
+          <strong>آج کا مشورہ:</strong> ${sug}
+        `,
+        dobLabel: "اپنی تاریخِ پیدائش درج کریں:",
+        title: "ستارے کیا کہتے ہیں؟",
+        button: "دیکھیں"
+      },
+      en: {
+        signs: {
+          Aries: "Aries: You are energetic, courageous, and a natural leader. A good day to start something new.",
+          Taurus: "Taurus: Patient, reliable, and hardworking. Focus on financial matters today.",
+          Gemini: "Gemini: Intelligent, talkative, and curious. Talking to someone new can be beneficial today.",
+          Cancer: "Cancer: Sensitive and loving. Avoid emotional decisions today.",
+          Leo: "Leo: Confident and brave. Channel your energy into positive tasks today.",
+          Virgo: "Virgo: Careful and organized. Take special care of your health today.",
+          Libra: "Libra: Balanced and cheerful. Avoid conflicts today.",
+          Scorpio: "Scorpio: Passionate and sincere. Keep secrets safe today.",
+          Sagittarius: "Sagittarius: Free-spirited and enthusiastic. A new journey will be pleasant today.",
+          Capricorn: "Capricorn: Hardworking and responsible. Use patience and persistence today.",
+          Aquarius: "Aquarius: Creative and popular among friends. A new idea might bring success today.",
+          Pisces: "Pisces: Sensitive and compassionate. Helping others will benefit you today."
+        },
+        warnings: [
+          "Avoid rushing decisions today.",
+          "Control your emotions.",
+          "Be careful in all matters.",
+          "Avoid unnecessary conflicts today."
+        ],
+        suggestions: [
+          "Talk to your loved ones.",
+          "Take some time for yourself.",
+          "Start a new hobby.",
+          "Focus on studies or work."
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>Zodiac Sign:</strong> ${sign}<br><br>
+          <strong>Description:</strong> ${desc}<br><br>
+          <strong>Today's Caution:</strong> ${warn}<br>
+          <strong>Today's Advice:</strong> ${sug}
+        `,
+        dobLabel: "Enter your Date of Birth:",
+        title: "What Stars Say?",
+        button: "See"
+      },
+      fr: {
+        signs: {
+          Aries: "Bélier : Vous êtes énergique, courageux et un leader naturel. Une bonne journée pour commencer quelque chose de nouveau.",
+          Taurus: "Taureau : Patient, fiable et travailleur. Concentrez-vous sur vos finances aujourd'hui.",
+          Gemini: "Gémeaux : Intelligent, bavard et curieux. Parler à quelqu'un de nouveau peut être bénéfique aujourd'hui.",
+          Cancer: "Cancer : Sensible et affectueux. Évitez les décisions émotionnelles aujourd'hui.",
+          Leo: "Lion : Confiant et courageux. Canalisez votre énergie dans des tâches positives aujourd'hui.",
+          Virgo: "Vierge : Prudent et organisé. Prenez soin de votre santé aujourd'hui.",
+          Libra: "Balance : Équilibré et joyeux. Évitez les conflits aujourd'hui.",
+          Scorpio: "Scorpion : Passionné et sincère. Gardez les secrets aujourd'hui.",
+          Sagittarius: "Sagittaire : Libre d'esprit et enthousiaste. Un nouveau voyage sera agréable aujourd'hui.",
+          Capricorn: "Capricorne : Travailleur et responsable. Soyez patient et persévérant aujourd'hui.",
+          Aquarius: "Verseau : Créatif et populaire parmi les amis. Une nouvelle idée pourrait apporter du succès aujourd'hui.",
+          Pisces: "Poissons : Sensible et compatissant. Aider les autres vous sera bénéfique aujourd'hui."
+        },
+        warnings: [
+          "Évitez les décisions impulsives aujourd'hui.",
+          "Contrôlez vos émotions.",
+          "Soyez prudent dans toutes les affaires.",
+          "Évitez les conflits inutiles aujourd'hui."
+        ],
+        suggestions: [
+          "Parlez à vos proches.",
+          "Prenez du temps pour vous.",
+          "Commencez un nouveau passe-temps.",
+          "Concentrez-vous sur vos études ou votre travail."
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>Signe astrologique :</strong> ${sign}<br><br>
+          <strong>Description :</strong> ${desc}<br><br>
+          <strong>Précaution d'aujourd'hui :</strong> ${warn}<br>
+          <strong>Conseil d'aujourd'hui :</strong> ${sug}
+        `,
+        dobLabel: "Entrez votre date de naissance :",
+        title: "Que disent les étoiles ?",
+        button: "Voir"
+      },
+      de: {
+        signs: {
+          Aries: "Widder: Sie sind energisch, mutig und ein natürlicher Anführer. Ein guter Tag, um etwas Neues zu beginnen.",
+          Taurus: "Stier: Geduldig, zuverlässig und fleißig. Konzentrieren Sie sich heute auf finanzielle Angelegenheiten.",
+          Gemini: "Zwillinge: Intelligent, gesprächig und neugierig. Ein Gespräch mit jemand Neuem kann heute von Vorteil sein.",
+          Cancer: "Krebs: Sensibel und liebevoll. Vermeiden Sie heute emotionale Entscheidungen.",
+          Leo: "Löwe: Selbstbewusst und mutig. Kanalisieren Sie heute Ihre Energie in positive Aufgaben.",
+          Virgo: "Jungfrau: Vorsichtig und organisiert. Achten Sie heute besonders auf Ihre Gesundheit.",
+          Libra: "Waage: Ausgeglichen und fröhlich. Vermeiden Sie heute Konflikte.",
+          Scorpio: "Skorpion: Leidenschaftlich und aufrichtig. Bewahren Sie heute Geheimnisse.",
+          Sagittarius: "Schütze: Freiheitsliebend und enthusiastisch. Eine neue Reise wird heute angenehm sein.",
+          Capricorn: "Steinbock: Fleißig und verantwortungsbewusst. Verwenden Sie heute Geduld und Ausdauer.",
+          Aquarius: "Wassermann: Kreativ und bei Freunden beliebt. Eine neue Idee könnte heute Erfolg bringen.",
+          Pisces: "Fische: Sensibel und mitfühlend. Anderen zu helfen wird Ihnen heute nützen."
+        },
+        warnings: [
+          "Vermeiden Sie heute vorschnelle Entscheidungen.",
+          "Kontrollieren Sie Ihre Emotionen.",
+          "Seien Sie in allen Angelegenheiten vorsichtig.",
+          "Vermeiden Sie heute unnötige Konflikte."
+        ],
+        suggestions: [
+          "Sprechen Sie mit Ihren Lieben.",
+          "Nehmen Sie sich Zeit für sich selbst.",
+          "Beginnen Sie ein neues Hobby.",
+          "Konzentrieren Sie sich auf Studium oder Arbeit."
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>Sternzeichen:</strong> ${sign}<br><br>
+          <strong>Beschreibung:</strong> ${desc}<br><br>
+          <strong>Heutige Vorsicht:</strong> ${warn}<br>
+          <strong>Heutiger Ratschlag:</strong> ${sug}
+        `,
+        dobLabel: "Geben Sie Ihr Geburtsdatum ein:",
+        title: "Was sagen die Sterne?",
+        button: "Anzeigen"
+      },
+      zh: {
+        signs: {
+          Aries: "白羊座：您充满活力、勇敢，是天生的领导者。今天是开始新事物的好日子。",
+          Taurus: "金牛座：耐心、可靠且勤奋。今天关注财务事务。",
+          Gemini: "双子座：聪明、健谈且好奇。今天与新朋友交流会有益处。",
+          Cancer: "巨蟹座：敏感且充满爱心。今天避免情绪化的决定。",
+          Leo: "狮子座：自信且勇敢。今天将精力投入积极的事情。",
+          Virgo: "处女座：细心且有条理。今天特别注意健康。",
+          Libra: "天秤座：平衡且开朗。今天避免冲突。",
+          Scorpio: "天蝎座：充满激情且真诚。今天保持秘密。",
+          Sagittarius: "射手座：自由奔放且热情。今天的旅行将愉快。",
+          Capricorn: "摩羯座：勤奋且负责任。今天耐心坚持。",
+          Aquarius: "水瓶座：有创意且受朋友欢迎。新想法可能带来成功。",
+          Pisces: "双鱼座：敏感且富有同情心。帮助他人将带来益处。"
+        },
+        warnings: [
+          "避免今天冲动做决定。",
+          "控制情绪。",
+          "在所有事情上小心。",
+          "避免不必要的冲突。"
+        ],
+        suggestions: [
+          "与亲人交流。",
+          "给自己留时间。",
+          "开始新爱好。",
+          "专注于学习或工作。"
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>星座:</strong> ${sign}<br><br>
+          <strong>描述:</strong> ${desc}<br><br>
+          <strong>今日注意:</strong> ${warn}<br>
+          <strong>今日建议:</strong> ${sug}
+        `,
+        dobLabel: "请输入出生日期:",
+        title: "星星怎么说？",
+        button: "查看"
+      },
+      ar: {
+        signs: {
+          Aries: "الحمل: أنت نشيط، شجاع وقائد بالفطرة. اليوم يوم جيد لبدء شيء جديد.",
+          Taurus: "الثور: صبور، موثوق ومجتهد. ركز على الأمور المالية اليوم.",
+          Gemini: "الجوزاء: ذكي، متحدث وفضولي. الحديث مع شخص جديد قد يكون مفيداً اليوم.",
+          Cancer: "السرطان: حساس ومحب. تجنب اتخاذ قرارات عاطفية اليوم.",
+          Leo: "الأسد: واثق وشجاع. استثمر طاقتك في مهام إيجابية اليوم.",
+          Virgo: "العذراء: حذر ومنظم. اعتنِ بصحتك اليوم.",
+          Libra: "الميزان: متوازن ومبتهج. تجنب النزاعات اليوم.",
+          Scorpio: "العقرب: شغوف ومخلص. احتفظ بالأسرار اليوم.",
+          Sagittarius: "القوس: حر ومتحمس. رحلة جديدة ستكون ممتعة اليوم.",
+          Capricorn: "الجدي: مجتهد ومسؤول. استخدم الصبر والمثابرة اليوم.",
+          Aquarius: "الدلو: مبدع ومحبوب بين الأصدقاء. فكرة جديدة قد تجلب النجاح اليوم.",
+          Pisces: "الحوت: حساس ومتعاون. مساعدة الآخرين ستفيدك اليوم."
+        },
+        warnings: [
+          "تجنب اتخاذ قرارات متسرعة اليوم.",
+          "تحكم في عواطفك.",
+          "كن حذراً في كل الأمور.",
+          "تجنب النزاعات غير الضرورية اليوم."
+        ],
+        suggestions: [
+          "تحدث مع أحبائك.",
+          "خذ وقتاً لنفسك.",
+          "ابدأ هواية جديدة.",
+          "ركز على الدراسة أو العمل."
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>البرج:</strong> ${sign}<br><br>
+          <strong>الوصف:</strong> ${desc}<br><br>
+          <strong>تحذير اليوم:</strong> ${warn}<br>
+          <strong>نصيحة اليوم:</strong> ${sug}
+        `,
+        dobLabel: "أدخل تاريخ ميلادك:",
+        title: "ماذا تقول النجوم؟",
+        button: "شاهد"
+      },
+      hi: {
+        signs: {
+          Aries: "मेष: आप ऊर्जावान, साहसी और स्वाभाविक नेता हैं। कुछ नया शुरू करने के लिए अच्छा दिन है।",
+          Taurus: "वृषभ: धैर्यवान, भरोसेमंद और मेहनती। आज अपने वित्तीय मामलों पर ध्यान दें।",
+          Gemini: "मिथुन: बुद्धिमान, बातूनी और जिज्ञासु। किसी नए व्यक्ति से बात करना आज लाभकारी हो सकता है।",
+          Cancer: "कर्क: संवेदनशील और प्रेमपूर्ण। आज भावनात्मक निर्णय लेने से बचें।",
+          Leo: "सिंह: आत्मविश्वासी और बहादुर। अपनी ऊर्जा को सकारात्मक कार्यों में लगाएं।",
+          Virgo: "कन्या: सावधान और संगठित। आज अपने स्वास्थ्य का खास ध्यान रखें।",
+          Libra: "तुला: संतुलित और खुशमिजाज। आज विवाद से बचें।",
+          Scorpio: "वृश्चिक: उत्साही और ईमानदार। आज रहस्य बनाए रखें।",
+          Sagittarius: "धनु: स्वतंत्र विचारक और उत्साही। कोई नया सफर सुखद रहेगा।",
+          Capricorn: "मकर: मेहनती और जिम्मेदार। धैर्य और स्थिरता से काम लें।",
+          Aquarius: "कुम्भ: रचनात्मक और दोस्तों में लोकप्रिय। नया विचार सफलता ला सकता है।",
+          Pisces: "मीन: संवेदनशील और सहानुभूतिपूर्ण। दूसरों की मदद से लाभ होगा।"
+        },
+        warnings: [
+          "आज जल्दबाजी से बचें।",
+          "अपनी भावनाओं को नियंत्रित करें।",
+          "सभी मामलों में सावधान रहें।",
+          "अनावश्यक विवाद से बचें।"
+        ],
+        suggestions: [
+          "अपने प्रियजनों से बात करें।",
+          "खुद के लिए समय निकालें।",
+          "कोई नया शौक शुरू करें।",
+          "पढ़ाई या काम पर ध्यान दें।"
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>राशि:</strong> ${sign}<br><br>
+          <strong>विवरण:</strong> ${desc}<br><br>
+          <strong>आज की सावधानी:</strong> ${warn}<br>
+          <strong>आज की सलाह:</strong> ${sug}
+        `,
+        dobLabel: "अपनी जन्मतिथि दर्ज करें:",
+        title: "सितारे क्या कहते हैं?",
+        button: "देखें"
+      },
+      fa: {
+        signs: {
+          Aries: "حمل: شما پرانرژی، شجاع و رهبر طبیعی هستید. امروز روز خوبی برای شروع کاری جدید است.",
+          Taurus: "ثور: صبور، قابل اعتماد و سخت‌کوش. امروز به امور مالی خود توجه کنید.",
+          Gemini: "جوزا: باهوش، پرحرف و کنجکاو. صحبت با فرد جدید می‌تواند امروز مفید باشد.",
+          Cancer: "سرطان: حساس و مهربان. امروز از تصمیمات احساسی خودداری کنید.",
+          Leo: "اسد: با اعتماد به نفس و شجاع. انرژی خود را در کارهای مثبت صرف کنید.",
+          Virgo: "سنبله: محتاط و منظم. مراقب سلامت خود باشید.",
+          Libra: "میزان: متعادل و خوش‌رو. از درگیری‌ها اجتناب کنید.",
+          Scorpio: "عقرب: پرشور و صادق. اسرار را محفوظ نگه دارید.",
+          Sagittarius: "قوس: آزاداندیش و پرشور. سفر جدیدی خوشایند خواهد بود.",
+          Capricorn: "جدی: سخت‌کوش و مسئولیت‌پذیر. با صبر و استقامت عمل کنید.",
+          Aquarius: "دلو: خلاق و محبوب میان دوستان. ایده جدید ممکن است موفقیت بیاورد.",
+          Pisces: "حوت: حساس و دلسوز. کمک به دیگران برایتان سودمند است."
+        },
+        warnings: [
+          "از تصمیم‌گیری عجولانه پرهیز کنید.",
+          "احساسات خود را کنترل کنید.",
+          "در همه امور محتاط باشید.",
+          "از نزاع‌های بی‌مورد دوری کنید."
+        ],
+        suggestions: [
+          "با عزیزان خود صحبت کنید.",
+          "برای خود وقت بگذارید.",
+          "سرگرمی جدیدی شروع کنید.",
+          "روی تحصیل یا کار تمرکز کنید."
+        ],
+        resultText: (sign, desc, warn, sug) => `
+          <strong>طالع بینی:</strong> ${sign}<br><br>
+          <strong>توضیحات:</strong> ${desc}<br><br>
+          <strong>هشدار امروز:</strong> ${warn}<br>
+          <strong>پیشنهاد امروز:</strong> ${sug}
+        `,
+        dobLabel: "تاریخ تولد خود را وارد کنید:",
+        title: "ستارگان چه می‌گویند؟",
+        button: "مشاهده"
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById('language').value;
+      const langData = data[lang];
+      const htmlDir = ['ar','fa','ur'].includes(lang) ? 'rtl' : 'ltr';
+
+      document.documentElement.lang = lang;
+      document.documentElement.dir = htmlDir;
+
+      document.body.style.direction = htmlDir;
+      document.getElementById('dobLabel').textContent = langData.dobLabel;
+      document.getElementById('title').textContent = langData.title;
+      document.getElementById('btn').textContent = langData.button;
+
+      document.getElementById('result').innerHTML = '';
+      document.getElementById('dob').value = '';
+      document.getElementById('dob').style.direction = htmlDir;
+    }
+
+    function getZodiac() {
+      const dob = document.getElementById('dob').value;
+      const lang = document.getElementById('language').value;
+      const langData = data[lang];
+      if (!dob) {
+        alert(lang === 'ur' ? 'براہ کرم تاریخ پیدائش منتخب کریں۔' : 'Please select your date of birth.');
+        return;
+      }
+
+      const date = new Date(dob);
+      const day = date.getUTCDate();
+      const month = date.getUTCMonth() + 1;
+
+      let sign = '';
+
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) sign = 'Aries';
+      else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) sign = 'Taurus';
+      else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) sign = 'Gemini';
+      else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) sign = 'Cancer';
+      else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) sign = 'Leo';
+      else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) sign = 'Virgo';
+      else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) sign = 'Libra';
+      else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) sign = 'Scorpio';
+      else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) sign = 'Sagittarius';
+      else if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) sign = 'Capricorn';
+      else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) sign = 'Aquarius';
+      else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) sign = 'Pisces';
+
+      const desc = langData.signs[sign];
+      const warn = langData.warnings[Math.floor(Math.random() * langData.warnings.length)];
+      const sug = langData.suggestions[Math.floor(Math.random() * langData.suggestions.length)];
+
+      document.getElementById('result').innerHTML = langData.resultText(sign, desc, warn, sug);
+    }
+
+    // Initial setup
+    changeLanguage();
+  </script>
+</body>
+</html>
